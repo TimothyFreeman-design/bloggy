@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Home, LogIn, LogOut, Edit, Trash2, Plus, Image, Music, X, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Home, LogIn, LogOut, Edit, Trash2, Plus, Music, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 
 interface Post {
   id: number;
@@ -11,27 +11,6 @@ interface Post {
 }
 
 type PageType = 'home' | 'post' | 'login' | 'admin';
-
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
-  
-  * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  
-  .gradient-bg { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #ddd6fe 100%); }
-  .gradient-text { background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .gradient-btn { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
-  .gradient-success { background: linear-gradient(135deg, #10b981, #059669); }
-  .gradient-card { background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6); }
-  
-  .nav-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-  .card-hover { transition: all 0.5s; }
-  .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
-  .image-zoom { transition: transform 0.7s; }
-  .card-hover:hover .image-zoom { transform: scale(1.1); }
-  
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  .animate-fade { animation: fadeIn 0.6s ease-in; }
-`;
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -71,39 +50,38 @@ const App = () => {
   };
 
   return (
-    <>
-      <style>{styles}</style>
-      <div className="min-h-screen gradient-bg">
-        <Navigation 
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          isLoggedIn={isLoggedIn}
-          onLogout={handleLogout}
-        />
-        
-        <main className="container mx-auto px-4 py-12 max-w-7xl">
-          {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
-          {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
-          {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
-          {currentPage === 'admin' && isLoggedIn && (
-            <AdminPage 
-              posts={posts}
-              onAddPost={addPost}
-              onUpdatePost={updatePost}
-              onDeletePost={deletePost}
-            />
-          )}
-        </main>
-        
-        <footer className="bg-white/50 backdrop-blur-sm border-t border-gray-200 mt-20">
-          <div className="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-600">
-            <p className="text-sm">© 2024 My Blog. Crafted with passion and creativity.</p>
-          </div>
-        </footer>
-      </div>
-    </>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #ddd6fe 100%)' }}>
+      <Navigation 
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+      />
+      
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '48px 16px' }}>
+        {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
+        {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
+        {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
+        {currentPage === 'admin' && isLoggedIn && (
+          <AdminPage 
+            posts={posts}
+            onAddPost={addPost}
+            onUpdatePost={updatePost}
+            onDeletePost={deletePost}
+          />
+        )}
+      </main>
+      
+      <footer style={{ background: 'rgba(255, 255, 255, 0.5)', backdropFilter: 'blur(10px)', borderTop: '1px solid #e5e7eb', marginTop: '80px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 16px', textAlign: 'center', color: '#6b7280' }}>
+          <p style={{ fontSize: '14px' }}>© 2024 My Blog. Crafted with passion and creativity.</p>
+        </div>
+      </footer>
+    </div>
   );
 };
+
+export default App;
 
 const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
   currentPage: PageType;
@@ -111,65 +89,109 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
   isLoggedIn: boolean;
   onLogout: () => void;
 }) => (
-  <nav className="sticky top-0 z-50 nav-blur shadow-lg border-b border-gray-200">
-    <div className="container mx-auto px-4 py-5 max-w-7xl">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 gradient-btn rounded-xl flex items-center justify-center shadow-lg">
-            <Sparkles className="text-white" size={20} />
-          </div>
-          <h1 className="text-3xl font-black gradient-text">
-            My Blog
-          </h1>
+  <nav style={{ position: 'sticky', top: 0, zIndex: 1000, background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderBottom: '1px solid #e5e7eb' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
+          <Sparkles style={{ color: 'white' }} size={20} />
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setCurrentPage('home')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
-              currentPage === 'home' 
-                ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
-                : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
-            }`}
-          >
-            <Home size={18} />
-            Home
-          </button>
-          
-          {isLoggedIn ? (
-            <>
-              <button
-                onClick={() => setCurrentPage('admin')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
-                  currentPage === 'admin' 
-                    ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
-                    : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
-                }`}
-              >
-                <Edit size={18} />
-                Admin
-              </button>
-              <button
-                onClick={onLogout}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-red-600 bg-red-50 hover:bg-red-100 hover:scale-105 transition-all duration-300"
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
-            </>
-          ) : (
+        <h1 style={{ fontSize: '28px', fontWeight: 900, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+          My Blog
+        </h1>
+      </div>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button
+          onClick={() => setCurrentPage('home')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '12px',
+            fontWeight: 600,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 0.3s',
+            background: currentPage === 'home' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'rgba(255, 255, 255, 0.5)',
+            color: currentPage === 'home' ? 'white' : '#374151',
+            boxShadow: currentPage === 'home' ? '0 4px 12px rgba(59, 130, 246, 0.5)' : 'none',
+            transform: currentPage === 'home' ? 'scale(1.05)' : 'scale(1)'
+          }}
+        >
+          <Home size={18} />
+          Home
+        </button>
+        
+        {isLoggedIn ? (
+          <>
             <button
-              onClick={() => setCurrentPage('login')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
-                currentPage === 'login' 
-                  ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
-                  : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
-              }`}
+              onClick={() => setCurrentPage('admin')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                background: currentPage === 'admin' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'rgba(255, 255, 255, 0.5)',
+                color: currentPage === 'admin' ? 'white' : '#374151',
+                boxShadow: currentPage === 'admin' ? '0 4px 12px rgba(59, 130, 246, 0.5)' : 'none',
+                transform: currentPage === 'admin' ? 'scale(1.05)' : 'scale(1)'
+              }}
             >
-              <LogIn size={18} />
-              Login
+              <Edit size={18} />
+              Admin
             </button>
-          )}
-        </div>
+            <button
+              onClick={onLogout}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                background: '#fef2f2',
+                color: '#dc2626'
+              }}
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setCurrentPage('login')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              background: currentPage === 'login' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'rgba(255, 255, 255, 0.5)',
+              color: currentPage === 'login' ? 'white' : '#374151',
+              boxShadow: currentPage === 'login' ? '0 4px 12px rgba(59, 130, 246, 0.5)' : 'none',
+              transform: currentPage === 'login' ? 'scale(1.05)' : 'scale(1)'
+            }}
+          >
+            <LogIn size={18} />
+            Login
+          </button>
+        )}
       </div>
     </div>
   </nav>
@@ -180,62 +202,79 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
   setSelectedPost: (post: Post) => void;
   setCurrentPage: (page: PageType) => void;
 }) => (
-  <div className="animate-fade">
-    <div className="text-center mb-16">
-      <div className="inline-flex items-center gap-2 gradient-btn text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
+  <div style={{ animation: 'fadeIn 0.6s ease-in' }}>
+    <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: 'white', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', fontWeight: 600, marginBottom: '24px', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
         <Sparkles size={16} />
         Welcome to my corner of the internet
       </div>
-      <h2 className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight">
+      <h2 style={{ fontSize: '72px', fontWeight: 900, background: 'linear-gradient(135deg, #1f2937, #1e40af, #6d28d9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: '24px', lineHeight: '1.1' }}>
         Latest Stories
       </h2>
-      <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto font-light">
+      <p style={{ fontSize: '24px', color: '#6b7280', maxWidth: '800px', margin: '0 auto', fontWeight: 300 }}>
         Exploring ideas, sharing experiences, and connecting through words
       </p>
     </div>
 
     {posts.length === 0 ? (
-      <div className="text-center py-32">
-        <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Edit className="text-blue-600" size={40} />
+      <div style={{ textAlign: 'center', padding: '128px 0' }}>
+        <div style={{ width: '96px', height: '96px', background: 'linear-gradient(135deg, #dbeafe, #e9d5ff)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+          <Edit style={{ color: '#3b82f6' }} size={40} />
         </div>
-        <p className="text-gray-500 text-2xl font-light">No posts yet</p>
-        <p className="text-gray-400 mt-2">Check back soon for new content!</p>
+        <p style={{ color: '#6b7280', fontSize: '24px', fontWeight: 300 }}>No posts yet</p>
+        <p style={{ color: '#9ca3af', marginTop: '8px' }}>Check back soon for new content!</p>
       </div>
     ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '32px' }}>
         {posts.map((post) => (
           <article 
             key={post.id} 
-            className="card-hover bg-white rounded-2xl shadow-xl cursor-pointer overflow-hidden border border-gray-100"
             onClick={() => {
               setSelectedPost(post);
               setCurrentPage('post');
             }}
+            style={{
+              background: 'white',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.5s',
+              cursor: 'pointer',
+              border: '1px solid #f3f4f6'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+            }}
           >
             {post.image ? (
-              <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
+              <div style={{ position: 'relative', width: '100%', height: '224px', overflow: 'hidden', background: 'linear-gradient(135deg, #dbeafe, #e9d5ff)' }}>
                 <img 
                   src={post.image} 
                   alt={post.title}
-                  className="w-full h-full object-cover image-zoom"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s' }}
                 />
               </div>
             ) : (
-              <div className="w-full h-56 gradient-card flex items-center justify-center">
-                <Sparkles className="text-white opacity-50" size={60} />
+              <div style={{ width: '100%', height: '224px', background: 'linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkles style={{ color: 'white', opacity: 0.5 }} size={60} />
               </div>
             )}
-            <div className="p-7">
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+            <div style={{ padding: '28px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#6b7280', marginBottom: '12px', fontWeight: 500 }}>
                 <Calendar size={14} />
-                <span className="font-medium">{post.date}</span>
+                <span>{post.date}</span>
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900 line-clamp-2">
+              <h3 style={{ fontSize: '24px', fontWeight: 700, color: '#1f2937', marginBottom: '12px', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {post.title}
               </h3>
-              <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">{post.content}</p>
-              <div className="flex items-center gap-2 text-blue-600 font-semibold">
+              <p style={{ color: '#6b7280', lineHeight: '1.6', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '16px' }}>{post.content}</p>
+              <div style={{ color: '#3b82f6', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
                 Read more 
                 <ArrowRight size={18} />
               </div>
@@ -254,48 +293,61 @@ const PostPage = ({ post, setCurrentPage }: {
   if (!post) return null;
   
   return (
-    <div className="max-w-4xl mx-auto animate-fade">
+    <div style={{ maxWidth: '1000px', margin: '0 auto', animation: 'fadeIn 0.6s ease-in' }}>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       <button
         onClick={() => setCurrentPage('home')}
-        className="group flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 font-semibold text-lg transition-all"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          color: '#3b82f6',
+          fontWeight: 600,
+          fontSize: '18px',
+          marginBottom: '32px',
+          cursor: 'pointer',
+          background: 'none',
+          border: 'none',
+          padding: 0
+        }}
       >
-        <ArrowRight size={20} className="rotate-180" />
+        <ArrowRight size={20} style={{ transform: 'rotate(180deg)' }} />
         Back to all posts
       </button>
-      <article className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+      <article style={{ background: 'white', borderRadius: '32px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)', border: '1px solid #f3f4f6' }}>
         {post.image && (
-          <div className="relative w-full h-96 md:h-[500px] overflow-hidden">
+          <div style={{ position: 'relative', width: '100%', height: '500px', overflow: 'hidden' }}>
             <img 
               src={post.image} 
               alt={post.title}
-              className="w-full h-full object-cover"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
         )}
-        <div className="p-12 md:p-16">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <div style={{ padding: '48px 64px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
             <Calendar size={16} />
-            <span className="font-medium">{post.date}</span>
+            <span style={{ fontWeight: 500 }}>{post.date}</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-12 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
+          <h1 style={{ fontSize: '56px', fontWeight: 900, background: 'linear-gradient(135deg, #1f2937, #4b5563)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: '48px', lineHeight: '1.1' }}>
             {post.title}
           </h1>
           
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+          <div style={{ fontSize: '18px', lineHeight: '1.8', color: '#374151', whiteSpace: 'pre-wrap' }}>
             {post.content.split('\n\n').map((paragraph, i) => (
-              <p key={i} className="mb-6 text-lg leading-relaxed">{paragraph}</p>
+              <p key={i} style={{ marginBottom: '24px' }}>{paragraph}</p>
             ))}
           </div>
 
           {post.audio && (
-            <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-100">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 gradient-btn rounded-xl flex items-center justify-center">
-                  <Music className="text-white" size={24} />
+            <div style={{ marginTop: '48px', padding: '32px', background: 'linear-gradient(135deg, #eff6ff, #f5f3ff)', borderRadius: '24px', border: '2px solid #dbeafe' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ width: '48px', height: '48px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Music style={{ color: 'white' }} size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Audio Content</h3>
+                <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1f2937' }}>Audio Content</h3>
               </div>
-              <audio controls className="w-full">
+              <audio controls style={{ width: '100%', marginTop: '8px' }}>
                 <source src={post.audio} />
                 Your browser does not support the audio element.
               </audio>
@@ -322,28 +374,29 @@ const LoginPage = ({ onLogin }: {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 animate-fade">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
-        <div className="w-16 h-16 gradient-btn rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <LogIn className="text-white" size={32} />
+    <div style={{ maxWidth: '500px', margin: '80px auto', animation: 'fadeIn 0.6s ease-in' }}>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <div style={{ background: 'white', borderRadius: '32px', padding: '48px', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)', border: '1px solid #f3f4f6' }}>
+        <div style={{ width: '64px', height: '64px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+          <LogIn style={{ color: 'white' }} size={32} />
         </div>
-        <h2 className="text-4xl font-black mb-2 text-gray-900 text-center">Welcome Back</h2>
-        <p className="text-gray-500 text-center mb-8">Sign in to manage your blog</p>
-        <div className="space-y-5">
+        <h2 style={{ fontSize: '36px', fontWeight: 900, color: '#1f2937', textAlign: 'center', marginBottom: '8px' }}>Welcome Back</h2>
+        <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '32px' }}>Sign in to manage your blog</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>
               Username
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg"
+              style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', transition: 'all 0.3s', fontFamily: 'inherit', boxSizing: 'border-box' }}
               placeholder="Enter your username"
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>
               Password
             </label>
             <input
@@ -351,26 +404,107 @@ const LoginPage = ({ onLogin }: {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg"
+              style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', transition: 'all 0.3s', fontFamily: 'inherit', boxSizing: 'border-box' }}
               placeholder="Enter your password"
             />
           </div>
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-              <p className="text-red-600 text-sm font-semibold">{error}</p>
+            <div style={{ background: '#fef2f2', border: '2px solid #fecaca', color: '#dc2626', padding: '16px', borderRadius: '12px', fontSize: '14px', fontWeight: 600 }}>
+              {error}
             </div>
           )}
           <button
             onClick={handleSubmit}
-            className="w-full gradient-btn text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-bold text-lg shadow-lg shadow-blue-500/50"
+            style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: 'white', padding: '16px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '18px', fontWeight: 700, boxShadow: '0 4px 12px rgba(59, 130, 246, 0.5)', transition: 'all 0.3s' }}
           >
             Sign In
           </button>
         </div>
-        <div className="mt-8 p-4 bg-gray-50 rounded-xl">
-          <p className="text-sm text-gray-600 text-center">
-            Demo: <span className="font-mono font-bold text-gray-900">admin / admin123</span>
+        <div style={{ marginTop: '32px', padding: '16px', background: '#f9fafb', borderRadius: '12px', textAlign: 'center' }}>
+          <p style={{ fontSize: '14px', color: '#6b7280' }}>
+            Demo: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1f2937' }}>admin / admin123</span>
           </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PostEditor = ({ post, onSave, onCancel }: {
+  post: Post | null;
+  onSave: (post: Omit<Post, 'id' | 'date'>) => void;
+  onCancel: () => void;
+}) => {
+  const [title, setTitle] = useState(post?.title || '');
+  const [content, setContent] = useState(post?.content || '');
+  const [image, setImage] = useState(post?.image || '');
+  const [audio, setAudio] = useState(post?.audio || '');
+
+  const handleSave = () => {
+    if (!title.trim() || !content.trim()) {
+      alert('Please fill in title and content');
+      return;
+    }
+    onSave({ title, content, image: image || undefined, audio: audio || undefined });
+  };
+
+  return (
+    <div style={{ background: 'white', borderRadius: '32px', padding: '48px', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)', border: '1px solid #f3f4f6', animation: 'fadeIn 0.6s ease-in' }}>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <h2 style={{ fontSize: '36px', fontWeight: 900, color: '#1f2937', marginBottom: '32px' }}>{post ? 'Edit Post' : 'Create New Post'}</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            placeholder="Post title"
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', fontFamily: 'inherit', boxSizing: 'border-box', minHeight: '300px', resize: 'vertical' }}
+            placeholder="Post content"
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Image URL</label>
+          <input
+            type="text"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            placeholder="Image URL (optional)"
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Audio URL</label>
+          <input
+            type="text"
+            value={audio}
+            onChange={(e) => setAudio(e.target.value)}
+            style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            placeholder="Audio URL (optional)"
+          />
+        </div>
+        <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
+          <button
+            onClick={handleSave}
+            style={{ flex: 1, background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', padding: '16px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '18px', fontWeight: 700, boxShadow: '0 4px 12px rgba(16, 185, 129, 0.5)' }}
+          >
+            {post ? 'Update Post' : 'Create Post'}
+          </button>
+          <button
+            onClick={onCancel}
+            style={{ flex: 1, background: '#f3f4f6', color: '#374151', padding: '16px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '18px', fontWeight: 700 }}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -397,16 +531,31 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
   };
 
   return (
-    <div className="animate-fade">
-      <div className="flex justify-between items-center mb-10">
+    <div style={{ animation: 'fadeIn 0.6s ease-in' }}>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
         <div>
-          <h2 className="text-5xl font-black text-gray-900 mb-2">Dashboard</h2>
-          <p className="text-gray-600 text-lg">Manage your blog posts</p>
+          <h2 style={{ fontSize: '48px', fontWeight: 900, color: '#1f2937', marginBottom: '8px' }}>Dashboard</h2>
+          <p style={{ fontSize: '18px', color: '#6b7280' }}>Manage your blog posts</p>
         </div>
         {!showEditor && (
           <button
             onClick={handleNew}
-            className="flex items-center gap-2 gradient-success text-white px-8 py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg shadow-lg shadow-green-500/50 transition-all"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '18px',
+              fontWeight: 700,
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.5)',
+              transition: 'all 0.3s'
+            }}
           >
             <Plus size={24} />
             New Post
@@ -432,56 +581,73 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
           }}
         />
       ) : (
-        <div className="space-y-5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {posts.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-lg border border-gray-100">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Edit className="text-blue-600" size={40} />
+            <div style={{ textAlign: 'center', padding: '80px 20px', background: 'white', borderRadius: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid #f3f4f6' }}>
+              <div style={{ width: '96px', height: '96px', background: 'linear-gradient(135deg, #dbeafe, #e9d5ff)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                <Edit style={{ color: '#3b82f6' }} size={40} />
               </div>
-              <p className="text-gray-500 text-2xl font-light mb-2">No posts yet</p>
-              <p className="text-gray-400">Create your first post to get started!</p>
+              <p style={{ color: '#6b7280', fontSize: '24px', fontWeight: 300, marginBottom: '8px' }}>No posts yet</p>
+              <p style={{ color: '#9ca3af' }}>Create your first post to get started!</p>
             </div>
           ) : (
             posts.map(post => (
-              <div key={post.id} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all p-6 border border-gray-100 hover:scale-[1.01]">
-                <div className="flex gap-6">
-                  {post.image ? (
-                    <img 
-                      src={post.image} 
-                      alt={post.title}
-                      className="w-32 h-32 object-cover rounded-xl shadow-md"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 gradient-card rounded-xl flex items-center justify-center shadow-md">
-                      <Sparkles className="text-white opacity-50" size={40} />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                      <Calendar size={14} />
-                      <span>{post.date}</span>
-                    </div>
-                    <p className="text-gray-600 line-clamp-2 leading-relaxed">{post.content}</p>
-                    {post.audio && (
-                      <div className="flex items-center gap-2 mt-3 text-blue-600">
-                        <Music size={16} />
-                        <span className="text-sm font-semibold">Audio attached</span>
-                      </div>
-                    )}
+              <div key={post.id} style={{ background: 'white', borderRadius: '20px', padding: '24px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)', border: '1px solid #f3f4f6', transition: 'all 0.3s', display: 'flex', gap: '24px' }}>
+                {post.image ? (
+                  <img 
+                    src={post.image} 
+                    alt={post.title}
+                    style={{ width: '128px', height: '128px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                  />
+                ) : (
+                  <div style={{ width: '128px', height: '128px', background: 'linear-gradient(135deg, #60a5fa, #a78bfa)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+                    <Sparkles style={{ color: 'white', opacity: 0.5 }} size={40} />
                   </div>
-                  <div className="flex gap-3">
+                )}
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '24px', fontWeight: 700, color: '#1f2937', marginBottom: '8px' }}>{post.title}</h3>
+                  <p style={{ color: '#6b7280', marginBottom: '16px' }}>{post.date}</p>
+                  <div style={{ display: 'flex', gap: '12px' }}>
                     <button
                       onClick={() => handleEdit(post)}
-                      className="p-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl h-fit transition-all hover:scale-110"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                        color: 'white',
+                        padding: '10px 20px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.5)',
+                        transition: 'all 0.3s'
+                      }}
                     >
-                      <Edit size={22} />
+                      <Edit size={16} />
+                      Edit
                     </button>
                     <button
                       onClick={() => onDeletePost(post.id)}
-                      className="p-3 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl h-fit transition-all hover:scale-110"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        background: '#fef2f2',
+                        color: '#dc2626',
+                        padding: '10px 20px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        transition: 'all 0.3s'
+                      }}
                     >
-                      <Trash2 size={22} />
+                      <Trash2 size={16} />
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -493,155 +659,3 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
     </div>
   );
 };
-
-const PostEditor = ({ post, onSave, onCancel }: {
-  post: Post | null;
-  onSave: (post: Omit<Post, 'id' | 'date'>) => void;
-  onCancel: () => void;
-}) => {
-  const [title, setTitle] = useState(post?.title || '');
-  const [content, setContent] = useState(post?.content || '');
-  const [image, setImage] = useState(post?.image || '');
-  const [audio, setAudio] = useState(post?.audio || '');
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setImage(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setAudio(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (title && content) {
-      onSave({ 
-        title, 
-        content, 
-        image: image || undefined,
-        audio: audio || undefined,
-      });
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
-      <h3 className="text-4xl font-black mb-8 text-gray-900">
-        {post ? 'Edit Post' : 'Create New Post'}
-      </h3>
-      <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">
-            Title
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg font-semibold"
-            placeholder="Enter an engaging title..."
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">
-            Content
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={14}
-            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg leading-relaxed resize-none"
-            placeholder="Share your story..."
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-3">
-            Featured Image (Optional)
-          </label>
-          <div className="flex gap-4 items-start">
-            <label className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 rounded-xl hover:shadow-md cursor-pointer transition-all border-2 border-blue-200 hover:scale-105 font-semibold">
-              <Image size={20} />
-              Choose Image
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
-            {image && (
-              <div className="relative">
-                <img src={image} alt="Preview" className="h-24 w-24 object-cover rounded-xl shadow-md" />
-                <button
-                  onClick={() => setImage('')}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg hover:scale-110 transition-all"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-3">
-            Audio File (Optional)
-          </label>
-          <div className="flex gap-4 items-center">
-            <label className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 rounded-xl hover:shadow-md cursor-pointer transition-all border-2 border-purple-200 hover:scale-105 font-semibold">
-              <Music size={20} />
-              Choose Audio
-              <input
-                type="file"
-                accept="audio/*"
-                onChange={handleAudioUpload}
-                className="hidden"
-              />
-            </label>
-            {audio && (
-              <div className="flex items-center gap-3">
-                <audio controls className="h-10">
-                  <source src={audio} />
-                </audio>
-                <button
-                  onClick={() => setAudio('')}
-                  className="bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg hover:scale-110 transition-all"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex gap-4 pt-6">
-          <button
-            onClick={handleSubmit}
-            className="flex-1 gradient-btn text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg transition-all shadow-lg shadow-blue-500/50"
-          >
-            {post ? 'Update Post' : 'Publish Post'}
-          </button>
-          <button
-            onClick={onCancel}
-            className="flex-1 bg-gray-200 text-gray-700 py-4 rounded-xl hover:bg-gray-300 hover:scale-105 font-bold text-lg transition-all"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default App;
