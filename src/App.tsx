@@ -213,7 +213,7 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
         Latest Stories
       </h2>
       <p style={{ fontSize: '24px', color: '#6b7280', maxWidth: '800px', margin: '0 auto', fontWeight: 300 }}>
-        Exploring ideas, sharing experiences, and connecting through words
+        This is where I share my thoughts, ideas, adventures, and experiences as a human navigating life as a disabled hooman
       </p>
     </div>
 
