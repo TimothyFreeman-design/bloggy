@@ -19,7 +19,7 @@ const App = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const handleLogin = (username: string, password: string) => {
-    if (username === 'admin' && password === 'admin123') {
+    if (username === 'TurtleTimmy' && password === '69Turtles!') {
       setIsLoggedIn(true);
       setCurrentPage('admin');
       return true;
