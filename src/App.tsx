@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, LogIn, LogOut, Edit, Trash2, Plus, Image, Music, X } from 'lucide-react';
+import { Home, LogIn, LogOut, Edit, Trash2, Plus, Image, Music, X, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 
 interface Post {
   id: number;
@@ -36,7 +36,7 @@ const App = () => {
     const newPost: Post = {
       ...post,
       id: Date.now(),
-      date: new Date().toLocaleDateString(),
+      date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
     };
     setPosts([newPost, ...posts]);
   };
@@ -50,7 +50,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <Navigation 
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -58,7 +58,7 @@ const App = () => {
         onLogout={handleLogout}
       />
       
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-12 max-w-7xl">
         {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
         {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
         {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
@@ -71,6 +71,12 @@ const App = () => {
           />
         )}
       </main>
+      
+      <footer className="bg-white/50 backdrop-blur-sm border-t border-gray-200 mt-20">
+        <div className="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-600">
+          <p className="text-sm">© 2024 My Blog. Crafted with passion and creativity.</p>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -81,20 +87,27 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
   isLoggedIn: boolean;
   onLogout: () => void;
 }) => (
-  <nav className="bg-white shadow-lg border-b border-gray-200">
-    <div className="container mx-auto px-4 py-4 max-w-6xl">
+  <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200">
+    <div className="container mx-auto px-4 py-5 max-w-7xl">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          My Blog
-        </h1>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <Sparkles className="text-white" size={20} />
+          </div>
+          <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            My Blog
+          </h1>
+        </div>
+        <div className="flex gap-3">
           <button
             onClick={() => setCurrentPage('home')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-              currentPage === 'home' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+              currentPage === 'home' 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
+                : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
             }`}
           >
-            <Home size={20} />
+            <Home size={18} />
             Home
           </button>
           
@@ -102,29 +115,33 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
             <>
               <button
                 onClick={() => setCurrentPage('admin')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  currentPage === 'admin' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+                  currentPage === 'admin' 
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
+                    : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
                 }`}
               >
-                <Edit size={20} />
+                <Edit size={18} />
                 Admin
               </button>
               <button
                 onClick={onLogout}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-red-600 hover:bg-red-50 hover:scale-105 transition-all duration-300"
               >
-                <LogOut size={20} />
+                <LogOut size={18} />
                 Logout
               </button>
             </>
           ) : (
             <button
               onClick={() => setCurrentPage('login')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                currentPage === 'login' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+                currentPage === 'login' 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
+                  : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
               }`}
             >
-              <LogIn size={20} />
+              <LogIn size={18} />
               Login
             </button>
           )}
@@ -140,43 +157,65 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
   setCurrentPage: (page: PageType) => void;
 }) => (
   <div>
-    <div className="text-center mb-12">
-      <h2 className="text-5xl font-bold mb-4 text-gray-800">Welcome to My Blog</h2>
-      <p className="text-xl text-gray-600">Sharing thoughts, stories, and experiences</p>
+    <div className="text-center mb-16 animate-fade-in">
+      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
+        <Sparkles size={16} />
+        Welcome to my corner of the internet
+      </div>
+      <h2 className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight">
+        Latest Stories
+      </h2>
+      <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto font-light">
+        Exploring ideas, sharing experiences, and connecting through words
+      </p>
     </div>
 
     {posts.length === 0 ? (
-      <div className="text-center py-20">
-        <p className="text-gray-500 text-xl">No posts yet. Check back later!</p>
+      <div className="text-center py-32">
+        <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Edit className="text-blue-600" size={40} />
+        </div>
+        <p className="text-gray-500 text-2xl font-light">No posts yet</p>
+        <p className="text-gray-400 mt-2">Check back soon for new content!</p>
       </div>
     ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map(post => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post, index) => (
           <article 
             key={post.id} 
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
+            className="group bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden border border-gray-100 hover:scale-105 hover:-translate-y-2"
             onClick={() => {
               setSelectedPost(post);
               setCurrentPage('post');
             }}
+            style={{ animationDelay: `${index * 100}ms` }}
           >
-            {post.image && (
-              <div className="w-full h-48 overflow-hidden">
+            {post.image ? (
+              <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
                 <img 
                   src={post.image} 
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            ) : (
+              <div className="w-full h-56 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center">
+                <Sparkles className="text-white opacity-50" size={60} />
               </div>
             )}
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors">
+            <div className="p-7">
+              <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                <Calendar size={14} />
+                <span className="font-medium">{post.date}</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                 {post.title}
               </h3>
-              <p className="text-sm text-gray-500 mb-3">{post.date}</p>
-              <p className="text-gray-700 line-clamp-3">{post.content}</p>
-              <div className="mt-4 text-blue-500 font-medium group-hover:text-blue-700">
-                Read more →
+              <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">{post.content}</p>
+              <div className="flex items-center gap-2 text-blue-600 font-semibold group-hover:gap-4 transition-all">
+                Read more 
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </article>
@@ -193,40 +232,66 @@ const PostPage = ({ post, setCurrentPage }: {
   if (!post) return null;
   
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto animate-fade-in">
       <button
         onClick={() => setCurrentPage('home')}
-        className="text-blue-500 hover:text-blue-700 mb-6 flex items-center gap-2"
+        className="group flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 font-semibold text-lg transition-all"
       >
-        ← Back to all posts
+        <ArrowRight size={20} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+        Back to all posts
       </button>
-      <article className="bg-white rounded-xl shadow-lg p-8 md:p-12">
+      <article className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
         {post.image && (
-          <img 
-            src={post.image} 
-            alt={post.title}
-            className="w-full h-96 object-cover rounded-lg mb-8"
-          />
-        )}
-        <h1 className="text-4xl md:text-5xl font-bold mb-3 text-gray-800">{post.title}</h1>
-        <p className="text-sm text-gray-500 mb-8 pb-8 border-b border-gray-200">{post.date}</p>
-        
-        <div className="prose max-w-none text-gray-700 text-lg leading-relaxed whitespace-pre-wrap mb-8">
-          {post.content}
-        </div>
-
-        {post.audio && (
-          <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3 mb-3">
-              <Music className="text-blue-500" size={24} />
-              <h3 className="font-semibold text-gray-800">Audio Content</h3>
+          <div className="relative w-full h-96 md:h-[500px] overflow-hidden">
+            <img 
+              src={post.image} 
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
+              <div className="flex items-center gap-2 text-sm mb-4 opacity-90">
+                <Calendar size={16} />
+                <span className="font-medium">{post.date}</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl font-black mb-4 leading-tight">{post.title}</h1>
             </div>
-            <audio controls className="w-full">
-              <source src={post.audio} />
-              Your browser does not support the audio element.
-            </audio>
           </div>
         )}
+        <div className="p-12 md:p-16">
+          {!post.image && (
+            <>
+              <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                <Calendar size={16} />
+                <span className="font-medium">{post.date}</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl font-black mb-12 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
+                {post.title}
+              </h1>
+            </>
+          )}
+          
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {post.content.split('\n\n').map((paragraph, i) => (
+              <p key={i} className="mb-6 text-lg leading-relaxed">{paragraph}</p>
+            ))}
+          </div>
+
+          {post.audio && (
+            <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-100">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Music className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Audio Content</h3>
+              </div>
+              <audio controls className="w-full">
+                <source src={post.audio} />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
+        </div>
       </article>
     </div>
   );
@@ -247,23 +312,28 @@ const LoginPage = ({ onLogin }: {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <div className="bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Admin Login</h2>
-        <div className="space-y-4">
+    <div className="max-w-md mx-auto mt-20 animate-fade-in">
+      <div className="bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <LogIn className="text-white" size={32} />
+        </div>
+        <h2 className="text-4xl font-black mb-2 text-gray-900 text-center">Welcome Back</h2>
+        <p className="text-gray-500 text-center mb-8">Sign in to manage your blog</p>
+        <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-2">
               Username
             </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg"
+              placeholder="Enter your username"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-2">
               Password
             </label>
             <input
@@ -271,20 +341,27 @@ const LoginPage = ({ onLogin }: {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg"
+              placeholder="Enter your password"
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+              <p className="text-red-600 text-sm font-semibold">{error}</p>
+            </div>
+          )}
           <button
             onClick={handleSubmit}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-bold text-lg shadow-lg shadow-blue-500/50"
           >
-            Login
+            Sign In
           </button>
         </div>
-        <p className="mt-6 text-sm text-gray-500 text-center">
-          Demo credentials: admin / admin123
-        </p>
+        <div className="mt-8 p-4 bg-gray-50 rounded-xl">
+          <p className="text-sm text-gray-600 text-center">
+            Demo: <span className="font-mono font-bold text-gray-900">admin / admin123</span>
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -310,15 +387,18 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-4xl font-bold text-gray-800">Manage Posts</h2>
+    <div className="animate-fade-in">
+      <div className="flex justify-between items-center mb-10">
+        <div>
+          <h2 className="text-5xl font-black text-gray-900 mb-2">Dashboard</h2>
+          <p className="text-gray-600 text-lg">Manage your blog posts</p>
+        </div>
         {!showEditor && (
           <button
             onClick={handleNew}
-            className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 shadow-md transition-all"
+            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg shadow-lg shadow-green-500/50 transition-all"
           >
-            <Plus size={20} />
+            <Plus size={24} />
             New Post
           </button>
         )}
@@ -342,43 +422,56 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
           }}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {posts.length === 0 ? (
-            <p className="text-gray-500 text-center py-12 text-lg">No posts yet. Create your first post!</p>
+            <div className="text-center py-20 bg-white rounded-3xl shadow-lg border border-gray-100">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Edit className="text-blue-600" size={40} />
+              </div>
+              <p className="text-gray-500 text-2xl font-light mb-2">No posts yet</p>
+              <p className="text-gray-400">Create your first post to get started!</p>
+            </div>
           ) : (
             posts.map(post => (
-              <div key={post.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                <div className="flex gap-4">
-                  {post.image && (
+              <div key={post.id} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all p-6 border border-gray-100 hover:scale-[1.02]">
+                <div className="flex gap-6">
+                  {post.image ? (
                     <img 
                       src={post.image} 
                       alt={post.title}
-                      className="w-24 h-24 object-cover rounded-lg"
+                      className="w-32 h-32 object-cover rounded-xl shadow-md"
                     />
+                  ) : (
+                    <div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-400 rounded-xl flex items-center justify-center shadow-md">
+                      <Sparkles className="text-white opacity-50" size={40} />
+                    </div>
                   )}
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800">{post.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{post.date}</p>
-                    <p className="text-gray-700 mt-2 line-clamp-2">{post.content}</p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h3>
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                      <Calendar size={14} />
+                      <span>{post.date}</span>
+                    </div>
+                    <p className="text-gray-600 line-clamp-2 leading-relaxed">{post.content}</p>
                     {post.audio && (
-                      <div className="flex items-center gap-2 mt-2 text-blue-600">
+                      <div className="flex items-center gap-2 mt-3 text-blue-600">
                         <Music size={16} />
-                        <span className="text-sm">Audio attached</span>
+                        <span className="text-sm font-semibold">Audio attached</span>
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <button
                       onClick={() => handleEdit(post)}
-                      className="p-2 text-blue-500 hover:bg-blue-50 rounded h-fit"
+                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-xl h-fit transition-all hover:scale-110"
                     >
-                      <Edit size={20} />
+                      <Edit size={22} />
                     </button>
                     <button
                       onClick={() => onDeletePost(post.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded h-fit"
+                      className="p-3 text-red-600 hover:bg-red-50 rounded-xl h-fit transition-all hover:scale-110"
                     >
-                      <Trash2 size={20} />
+                      <Trash2 size={22} />
                     </button>
                   </div>
                 </div>
@@ -431,43 +524,43 @@ const PostEditor = ({ post, onSave, onCancel }: {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
-      <h3 className="text-3xl font-bold mb-6 text-gray-800">
+    <div className="bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
+      <h3 className="text-4xl font-black mb-8 text-gray-900">
         {post ? 'Edit Post' : 'Create New Post'}
       </h3>
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-bold text-gray-700 mb-2">
             Title
           </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter post title..."
+            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg font-semibold"
+            placeholder="Enter an engaging title..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-bold text-gray-700 mb-2">
             Content
           </label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            rows={12}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Write your post content..."
+            rows={14}
+            className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-lg leading-relaxed resize-none"
+            placeholder="Share your story..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-bold text-gray-700 mb-3">
             Featured Image (Optional)
           </label>
           <div className="flex gap-4 items-start">
-            <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors">
+            <label className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 rounded-xl hover:shadow-md cursor-pointer transition-all border-2 border-blue-200 hover:scale-105 font-semibold">
               <Image size={20} />
               Choose Image
               <input
@@ -478,13 +571,13 @@ const PostEditor = ({ post, onSave, onCancel }: {
               />
             </label>
             {image && (
-              <div className="relative">
-                <img src={image} alt="Preview" className="h-20 w-20 object-cover rounded-lg" />
+              <div className="relative group">
+                <img src={image} alt="Preview" className="h-24 w-24 object-cover rounded-xl shadow-md" />
                 <button
                   onClick={() => setImage('')}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
                 >
-                  <X size={14} />
+                  <X size={16} />
                 </button>
               </div>
             )}
@@ -492,11 +585,11 @@ const PostEditor = ({ post, onSave, onCancel }: {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-bold text-gray-700 mb-3">
             Audio File (Optional)
           </label>
           <div className="flex gap-4 items-center">
-            <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors">
+            <label className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 rounded-xl hover:shadow-md cursor-pointer transition-all border-2 border-purple-200 hover:scale-105 font-semibold">
               <Music size={20} />
               Choose Audio
               <input
@@ -513,25 +606,25 @@ const PostEditor = ({ post, onSave, onCancel }: {
                 </audio>
                 <button
                   onClick={() => setAudio('')}
-                  className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  className="bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg hover:scale-110 transition-all"
                 >
-                  <X size={14} />
+                  <X size={16} />
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex gap-4 pt-6">
           <button
             onClick={handleSubmit}
-            className="flex-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 font-medium transition-colors"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg transition-all shadow-lg shadow-blue-500/50"
           >
             {post ? 'Update Post' : 'Publish Post'}
           </button>
           <button
             onClick={onCancel}
-            className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 font-medium transition-colors"
+            className="flex-1 bg-gray-200 text-gray-700 py-4 rounded-xl hover:bg-gray-300 hover:scale-105 font-bold text-lg transition-all"
           >
             Cancel
           </button>
