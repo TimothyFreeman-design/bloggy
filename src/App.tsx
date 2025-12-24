@@ -1,62 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Home, LogIn, LogOut, Edit, Trash2, Plus, Image, Music, X } from 'lucide-react';
 
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  image?: string;
+  audio?: string;
+}
+
+type PageType = 'home' | 'post' | 'login' | 'admin';
+
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // explicitly type posts as an array so setPosts accepts any[] values
-  const [posts, setPosts] = useState<any[]>([]);
-  // selectedPost can be a post object or null
-  const [selectedPost, setSelectedPost] = useState<any | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  // Load posts and auth state from storage on mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const postsResult = localStorage.getItem('blog-posts');
-        if (postsResult) {
-          setPosts(JSON.parse(postsResult));
-        }
-        
-        const authResult = localStorage.getItem('blog-auth');
-        if (authResult) {
-          setIsLoggedIn(JSON.parse(authResult));
-        }
-      } catch (error) {
-        console.log('No existing data found');
-      }
-    };
-    loadData();
-  }, []);
-
-  // Save posts whenever they change
-  useEffect(() => {
-    const savePosts = async () => {
-      if (posts.length > 0 || posts.length === 0) {
-        localStorage.setItem('blog-posts', JSON.stringify(posts));
-      }
-    };
-    savePosts();
-  }, [posts]);
-
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = (username: string, password: string) => {
     if (username === 'admin' && password === 'admin123') {
       setIsLoggedIn(true);
-      localStorage.setItem('blog-auth', JSON.stringify(true));
       setCurrentPage('admin');
       return true;
     }
     return false;
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.setItem('blog-auth', JSON.stringify(false));
     setCurrentPage('home');
   };
 
-  const addPost = (post: any) => {
-    const newPost = {
+  const addPost = (post: Omit<Post, 'id' | 'date'>) => {
+    const newPost: Post = {
       ...post,
       id: Date.now(),
       date: new Date().toLocaleDateString(),
@@ -64,11 +41,11 @@ const App = () => {
     setPosts([newPost, ...posts]);
   };
 
-  const updatePost = (id: any, updatedPost: any) => {
+  const updatePost = (id: number, updatedPost: Omit<Post, 'id' | 'date'>) => {
     setPosts(posts.map(p => p.id === id ? { ...updatedPost, id, date: p.date } : p));
   };
 
-  const deletePost = (id: any) => {
+  const deletePost = (id: number) => {
     setPosts(posts.filter(p => p.id !== id));
   };
 
@@ -84,7 +61,7 @@ const App = () => {
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
         {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
-        {currentPage === 'login' && <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />}
+        {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
         {currentPage === 'admin' && isLoggedIn && (
           <AdminPage 
             posts={posts}
@@ -98,7 +75,12 @@ const App = () => {
   );
 };
 
-const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: { currentPage: string; setCurrentPage: (page: string) => void; isLoggedIn: boolean; onLogout: () => void }) => (
+const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
+  currentPage: PageType;
+  setCurrentPage: (page: PageType) => void;
+  isLoggedIn: boolean;
+  onLogout: () => void;
+}) => (
   <nav className="bg-white shadow-lg border-b border-gray-200">
     <div className="container mx-auto px-4 py-4 max-w-6xl">
       <div className="flex justify-between items-center">
@@ -152,7 +134,11 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: { cur
   </nav>
 );
 
-const HomePage = ({ posts, setSelectedPost, setCurrentPage }: { posts: any[]; setSelectedPost: (post: any) => void; setCurrentPage: (page: string) => void }) => (
+const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
+  posts: Post[];
+  setSelectedPost: (post: Post) => void;
+  setCurrentPage: (page: PageType) => void;
+}) => (
   <div>
     <div className="text-center mb-12">
       <h2 className="text-5xl font-bold mb-4 text-gray-800">Welcome to My Blog</h2>
@@ -200,7 +186,10 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: { posts: any[]; se
   </div>
 );
 
-const PostPage = ({ post, setCurrentPage }: { post: any; setCurrentPage: (page: string) => void }) => {
+const PostPage = ({ post, setCurrentPage }: {
+  post: Post | null;
+  setCurrentPage: (page: PageType) => void;
+}) => {
   if (!post) return null;
   
   return (
@@ -243,13 +232,15 @@ const PostPage = ({ post, setCurrentPage }: { post: any; setCurrentPage: (page: 
   );
 };
 
-const LoginPage = ({ onLogin, setCurrentPage }: { onLogin: (username: string, password: string) => Promise<boolean>; setCurrentPage: (page: string) => void }) => {
+const LoginPage = ({ onLogin }: {
+  onLogin: (username: string, password: string) => boolean;
+}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async () => {
-    const success = await onLogin(username, password);
+  const handleSubmit = () => {
+    const success = onLogin(username, password);
     if (!success) {
       setError('Invalid credentials. Try admin/admin123');
     }
@@ -299,11 +290,16 @@ const LoginPage = ({ onLogin, setCurrentPage }: { onLogin: (username: string, pa
   );
 };
 
-const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: { posts: any[]; onAddPost: (post: any) => void; onUpdatePost: (id: number, post: any) => void; onDeletePost: (id: number) => void }) => {
+const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
+  posts: Post[];
+  onAddPost: (post: Omit<Post, 'id' | 'date'>) => void;
+  onUpdatePost: (id: number, post: Omit<Post, 'id' | 'date'>) => void;
+  onDeletePost: (id: number) => void;
+}) => {
   const [showEditor, setShowEditor] = useState(false);
-  const [editingPost, setEditingPost] = useState<any>(null);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
 
-  const handleEdit = (post: any) => {
+  const handleEdit = (post: Post) => {
     setEditingPost(post);
     setShowEditor(true);
   };
@@ -332,7 +328,7 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: { posts: an
         <PostEditor
           post={editingPost}
           onSave={(post) => {
-            if (editingPost && editingPost.id) {
+            if (editingPost) {
               onUpdatePost(editingPost.id, post);
             } else {
               onAddPost(post);
@@ -395,7 +391,11 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: { posts: an
   );
 };
 
-const PostEditor = ({ post, onSave, onCancel }: { post: any; onSave: (post: any) => void; onCancel: () => void }) => {
+const PostEditor = ({ post, onSave, onCancel }: {
+  post: Post | null;
+  onSave: (post: Omit<Post, 'id' | 'date'>) => void;
+  onCancel: () => void;
+}) => {
   const [title, setTitle] = useState(post?.title || '');
   const [content, setContent] = useState(post?.content || '');
   const [image, setImage] = useState(post?.image || '');
@@ -405,7 +405,7 @@ const PostEditor = ({ post, onSave, onCancel }: { post: any; onSave: (post: any)
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => setImage((e.target as FileReader).result as string);
+      reader.onload = (e) => setImage(e.target?.result as string);
       reader.readAsDataURL(file);
     }
   };
@@ -414,7 +414,7 @@ const PostEditor = ({ post, onSave, onCancel }: { post: any; onSave: (post: any)
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => setAudio((e.target as FileReader).result as string);
+      reader.onload = (e) => setAudio(e.target?.result as string);
       reader.readAsDataURL(file);
     }
   };
@@ -424,9 +424,8 @@ const PostEditor = ({ post, onSave, onCancel }: { post: any; onSave: (post: any)
       onSave({ 
         title, 
         content, 
-        image: image || null,
-        audio: audio || null,
-        date: post?.date || new Date().toLocaleDateString() 
+        image: image || undefined,
+        audio: audio || undefined,
       });
     }
   };
