@@ -12,6 +12,27 @@ interface Post {
 
 type PageType = 'home' | 'post' | 'login' | 'admin';
 
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+  
+  * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  
+  .gradient-bg { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #ddd6fe 100%); }
+  .gradient-text { background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .gradient-btn { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+  .gradient-success { background: linear-gradient(135deg, #10b981, #059669); }
+  .gradient-card { background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6); }
+  
+  .nav-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+  .card-hover { transition: all 0.5s; }
+  .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
+  .image-zoom { transition: transform 0.7s; }
+  .card-hover:hover .image-zoom { transform: scale(1.1); }
+  
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade { animation: fadeIn 0.6s ease-in; }
+`;
+
 const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,34 +71,37 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Navigation 
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        isLoggedIn={isLoggedIn}
-        onLogout={handleLogout}
-      />
-      
-      <main className="container mx-auto px-4 py-12 max-w-7xl">
-        {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
-        {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
-        {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
-        {currentPage === 'admin' && isLoggedIn && (
-          <AdminPage 
-            posts={posts}
-            onAddPost={addPost}
-            onUpdatePost={updatePost}
-            onDeletePost={deletePost}
-          />
-        )}
-      </main>
-      
-      <footer className="bg-white/50 backdrop-blur-sm border-t border-gray-200 mt-20">
-        <div className="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-600">
-          <p className="text-sm">© 2024 My Blog. Crafted with passion and creativity.</p>
-        </div>
-      </footer>
-    </div>
+    <>
+      <style>{styles}</style>
+      <div className="min-h-screen gradient-bg">
+        <Navigation 
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          isLoggedIn={isLoggedIn}
+          onLogout={handleLogout}
+        />
+        
+        <main className="container mx-auto px-4 py-12 max-w-7xl">
+          {currentPage === 'home' && <HomePage posts={posts} setSelectedPost={setSelectedPost} setCurrentPage={setCurrentPage} />}
+          {currentPage === 'post' && <PostPage post={selectedPost} setCurrentPage={setCurrentPage} />}
+          {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
+          {currentPage === 'admin' && isLoggedIn && (
+            <AdminPage 
+              posts={posts}
+              onAddPost={addPost}
+              onUpdatePost={updatePost}
+              onDeletePost={deletePost}
+            />
+          )}
+        </main>
+        
+        <footer className="bg-white/50 backdrop-blur-sm border-t border-gray-200 mt-20">
+          <div className="container mx-auto px-4 py-8 max-w-7xl text-center text-gray-600">
+            <p className="text-sm">© 2024 My Blog. Crafted with passion and creativity.</p>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 };
 
@@ -87,14 +111,14 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
   isLoggedIn: boolean;
   onLogout: () => void;
 }) => (
-  <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200">
+  <nav className="sticky top-0 z-50 nav-blur shadow-lg border-b border-gray-200">
     <div className="container mx-auto px-4 py-5 max-w-7xl">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 gradient-btn rounded-xl flex items-center justify-center shadow-lg">
             <Sparkles className="text-white" size={20} />
           </div>
-          <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black gradient-text">
             My Blog
           </h1>
         </div>
@@ -103,8 +127,8 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
             onClick={() => setCurrentPage('home')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
               currentPage === 'home' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
-                : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
+                ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
+                : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
             }`}
           >
             <Home size={18} />
@@ -117,8 +141,8 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
                 onClick={() => setCurrentPage('admin')}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
                   currentPage === 'admin' 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
-                    : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
+                    ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
+                    : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
                 }`}
               >
                 <Edit size={18} />
@@ -126,7 +150,7 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
               </button>
               <button
                 onClick={onLogout}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-red-600 hover:bg-red-50 hover:scale-105 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-red-600 bg-red-50 hover:bg-red-100 hover:scale-105 transition-all duration-300"
               >
                 <LogOut size={18} />
                 Logout
@@ -137,8 +161,8 @@ const Navigation = ({ currentPage, setCurrentPage, isLoggedIn, onLogout }: {
               onClick={() => setCurrentPage('login')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
                 currentPage === 'login' 
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50 scale-105' 
-                  : 'text-gray-700 hover:bg-gray-100 hover:scale-105'
+                  ? 'gradient-btn text-white shadow-lg shadow-blue-500/50 scale-105' 
+                  : 'text-gray-700 bg-white/50 hover:bg-gray-100 hover:scale-105'
               }`}
             >
               <LogIn size={18} />
@@ -156,9 +180,9 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
   setSelectedPost: (post: Post) => void;
   setCurrentPage: (page: PageType) => void;
 }) => (
-  <div>
-    <div className="text-center mb-16 animate-fade-in">
-      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
+  <div className="animate-fade">
+    <div className="text-center mb-16">
+      <div className="inline-flex items-center gap-2 gradient-btn text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
         <Sparkles size={16} />
         Welcome to my corner of the internet
       </div>
@@ -180,27 +204,25 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
       </div>
     ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post, index) => (
+        {posts.map((post) => (
           <article 
             key={post.id} 
-            className="group bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden border border-gray-100 hover:scale-105 hover:-translate-y-2"
+            className="card-hover bg-white rounded-2xl shadow-xl cursor-pointer overflow-hidden border border-gray-100"
             onClick={() => {
               setSelectedPost(post);
               setCurrentPage('post');
             }}
-            style={{ animationDelay: `${index * 100}ms` }}
           >
             {post.image ? (
               <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
                 <img 
                   src={post.image} 
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover image-zoom"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             ) : (
-              <div className="w-full h-56 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center">
+              <div className="w-full h-56 gradient-card flex items-center justify-center">
                 <Sparkles className="text-white opacity-50" size={60} />
               </div>
             )}
@@ -209,13 +231,13 @@ const HomePage = ({ posts, setSelectedPost, setCurrentPage }: {
                 <Calendar size={14} />
                 <span className="font-medium">{post.date}</span>
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+              <h3 className="text-2xl font-bold mb-3 text-gray-900 line-clamp-2">
                 {post.title}
               </h3>
               <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">{post.content}</p>
-              <div className="flex items-center gap-2 text-blue-600 font-semibold group-hover:gap-4 transition-all">
+              <div className="flex items-center gap-2 text-blue-600 font-semibold">
                 Read more 
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={18} />
               </div>
             </div>
           </article>
@@ -232,12 +254,12 @@ const PostPage = ({ post, setCurrentPage }: {
   if (!post) return null;
   
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
+    <div className="max-w-4xl mx-auto animate-fade">
       <button
         onClick={() => setCurrentPage('home')}
         className="group flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 font-semibold text-lg transition-all"
       >
-        <ArrowRight size={20} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+        <ArrowRight size={20} className="rotate-180" />
         Back to all posts
       </button>
       <article className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
@@ -248,28 +270,16 @@ const PostPage = ({ post, setCurrentPage }: {
               alt={post.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
-              <div className="flex items-center gap-2 text-sm mb-4 opacity-90">
-                <Calendar size={16} />
-                <span className="font-medium">{post.date}</span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-black mb-4 leading-tight">{post.title}</h1>
-            </div>
           </div>
         )}
         <div className="p-12 md:p-16">
-          {!post.image && (
-            <>
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-                <Calendar size={16} />
-                <span className="font-medium">{post.date}</span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-black mb-12 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
-                {post.title}
-              </h1>
-            </>
-          )}
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Calendar size={16} />
+            <span className="font-medium">{post.date}</span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black mb-12 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent leading-tight">
+            {post.title}
+          </h1>
           
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
             {post.content.split('\n\n').map((paragraph, i) => (
@@ -280,7 +290,7 @@ const PostPage = ({ post, setCurrentPage }: {
           {post.audio && (
             <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-100">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 gradient-btn rounded-xl flex items-center justify-center">
                   <Music className="text-white" size={24} />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">Audio Content</h3>
@@ -312,9 +322,9 @@ const LoginPage = ({ onLogin }: {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 animate-fade-in">
+    <div className="max-w-md mx-auto mt-20 animate-fade">
       <div className="bg-white rounded-3xl shadow-2xl p-10 border border-gray-100">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <div className="w-16 h-16 gradient-btn rounded-2xl flex items-center justify-center mx-auto mb-6">
           <LogIn className="text-white" size={32} />
         </div>
         <h2 className="text-4xl font-black mb-2 text-gray-900 text-center">Welcome Back</h2>
@@ -352,7 +362,7 @@ const LoginPage = ({ onLogin }: {
           )}
           <button
             onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-bold text-lg shadow-lg shadow-blue-500/50"
+            className="w-full gradient-btn text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 transition-all font-bold text-lg shadow-lg shadow-blue-500/50"
           >
             Sign In
           </button>
@@ -387,7 +397,7 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
   };
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade">
       <div className="flex justify-between items-center mb-10">
         <div>
           <h2 className="text-5xl font-black text-gray-900 mb-2">Dashboard</h2>
@@ -396,7 +406,7 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
         {!showEditor && (
           <button
             onClick={handleNew}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg shadow-lg shadow-green-500/50 transition-all"
+            className="flex items-center gap-2 gradient-success text-white px-8 py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg shadow-lg shadow-green-500/50 transition-all"
           >
             <Plus size={24} />
             New Post
@@ -433,7 +443,7 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
             </div>
           ) : (
             posts.map(post => (
-              <div key={post.id} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all p-6 border border-gray-100 hover:scale-[1.02]">
+              <div key={post.id} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all p-6 border border-gray-100 hover:scale-[1.01]">
                 <div className="flex gap-6">
                   {post.image ? (
                     <img 
@@ -442,7 +452,7 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
                       className="w-32 h-32 object-cover rounded-xl shadow-md"
                     />
                   ) : (
-                    <div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-400 rounded-xl flex items-center justify-center shadow-md">
+                    <div className="w-32 h-32 gradient-card rounded-xl flex items-center justify-center shadow-md">
                       <Sparkles className="text-white opacity-50" size={40} />
                     </div>
                   )}
@@ -463,13 +473,13 @@ const AdminPage = ({ posts, onAddPost, onUpdatePost, onDeletePost }: {
                   <div className="flex gap-3">
                     <button
                       onClick={() => handleEdit(post)}
-                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-xl h-fit transition-all hover:scale-110"
+                      className="p-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl h-fit transition-all hover:scale-110"
                     >
                       <Edit size={22} />
                     </button>
                     <button
                       onClick={() => onDeletePost(post.id)}
-                      className="p-3 text-red-600 hover:bg-red-50 rounded-xl h-fit transition-all hover:scale-110"
+                      className="p-3 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl h-fit transition-all hover:scale-110"
                     >
                       <Trash2 size={22} />
                     </button>
@@ -571,11 +581,11 @@ const PostEditor = ({ post, onSave, onCancel }: {
               />
             </label>
             {image && (
-              <div className="relative group">
+              <div className="relative">
                 <img src={image} alt="Preview" className="h-24 w-24 object-cover rounded-xl shadow-md" />
                 <button
                   onClick={() => setImage('')}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-lg hover:scale-110 transition-all"
                 >
                   <X size={16} />
                 </button>
@@ -618,7 +628,7 @@ const PostEditor = ({ post, onSave, onCancel }: {
         <div className="flex gap-4 pt-6">
           <button
             onClick={handleSubmit}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg transition-all shadow-lg shadow-blue-500/50"
+            className="flex-1 gradient-btn text-white py-4 rounded-xl hover:shadow-xl hover:scale-105 font-bold text-lg transition-all shadow-lg shadow-blue-500/50"
           >
             {post ? 'Update Post' : 'Publish Post'}
           </button>
