@@ -11,6 +11,20 @@ Currently, two official plugins are available:
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
+## Backend login server
+
+A lightweight Express backend is available at `server.js` to handle admin authentication securely with server-side sessions.
+
+1. Copy `.env.example` to `.env`.
+2. Set `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`, and `FRONTEND_ORIGIN`.
+4. Generate a bcrypt hash for your admin password with:
+   - `npm install`
+   - `npm run hash-password "YourStrongPassword"`
+5. Start the backend with `npm run server`.
+6. In development, run the frontend separately with `npm run dev` or run both together with `npm run dev:all`.
+
+If the frontend is served from the same origin in production, the admin API will continue to work using relative `/api/*` paths.
+
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:

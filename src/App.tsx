@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Home, LogIn, LogOut, Edit, Trash2, Plus, Music, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 interface Post {
   id: number;
@@ -18,16 +20,59 @@ const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  const handleLogin = (username: string, password: string) => {
-    if (username === 'TurtleTimmy' && password === '69Turtles!') {
-      setIsLoggedIn(true);
-      setCurrentPage('admin');
-      return true;
+  const fetchSession = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/session`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const result = await response.json();
+      setIsLoggedIn(Boolean(result.loggedIn));
+    } catch {
+      setIsLoggedIn(false);
     }
+  };
+
+  useEffect(() => {
+    fetchSession();
+  }, []);
+
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setIsLoggedIn(true);
+        setCurrentPage('admin');
+        return true;
+      }
+    } catch {
+      // ignore network errors and keep failed login simple
+    }
+
     return false;
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_BASE_URL}/api/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch {
+      // ignore logout errors
+    }
+
     setIsLoggedIn(false);
     setCurrentPage('home');
   };
@@ -360,17 +405,58 @@ const PostPage = ({ post, setCurrentPage }: {
 };
 
 const LoginPage = ({ onLogin }: {
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (username: string, password: string) => Promise<boolean>;
 }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
-  const handleSubmit = () => {
-    const success = onLogin(username, password);
-    if (!success) {
-      setError('Invalid credentials. Try admin/admin123');
+  useEffect(() => {
+    if (!lockoutUntil) {
+      setSecondsLeft(0);
+      return;
     }
+
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((lockoutUntil - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+      if (remaining <= 0) {
+        setLockoutUntil(null);
+      }
+    };
+
+    tick();
+    const interval = window.setInterval(tick, 1000);
+    return () => window.clearInterval(interval);
+  }, [lockoutUntil]);
+
+  const handleSubmit = async () => {
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      return;
+    }
+
+    setError('');
+
+    const success = await onLogin(username, password);
+    if (!success) {
+      const attempts = failedAttempts + 1;
+      setFailedAttempts(attempts);
+
+      if (attempts >= 3) {
+        setLockoutUntil(Date.now() + 30000);
+        setError('Too many failed attempts. Please wait 30 seconds before trying again.');
+      } else {
+        setError('Invalid username or password.');
+      }
+
+      return;
+    }
+
+    setFailedAttempts(0);
+    setError('');
   };
 
   return (
@@ -391,6 +477,7 @@ const LoginPage = ({ onLogin }: {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
               style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', transition: 'all 0.3s', fontFamily: 'inherit', boxSizing: 'border-box' }}
               placeholder="Enter your username"
             />
@@ -403,7 +490,8 @@ const LoginPage = ({ onLogin }: {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+              onKeyPress={(e) => e.key === 'Enter' && !lockoutUntil && handleSubmit()}
+              autoComplete="current-password"
               style={{ width: '100%', padding: '16px 20px', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '16px', transition: 'all 0.3s', fontFamily: 'inherit', boxSizing: 'border-box' }}
               placeholder="Enter your password"
             />
@@ -415,15 +503,23 @@ const LoginPage = ({ onLogin }: {
           )}
           <button
             onClick={handleSubmit}
-            style={{ width: '100%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', color: 'white', padding: '16px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '18px', fontWeight: 700, boxShadow: '0 4px 12px rgba(59, 130, 246, 0.5)', transition: 'all 0.3s' }}
+            disabled={Boolean(lockoutUntil) || !username.trim() || !password}
+            style={{
+              width: '100%',
+              background: lockoutUntil || !username.trim() || !password ? '#93c5fd' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+              color: 'white',
+              padding: '16px',
+              borderRadius: '12px',
+              border: 'none',
+              cursor: lockoutUntil || !username.trim() || !password ? 'not-allowed' : 'pointer',
+              fontSize: '18px',
+              fontWeight: 700,
+              boxShadow: lockoutUntil || !username.trim() || !password ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.5)',
+              transition: 'all 0.3s'
+            }}
           >
-            Sign In
+            {lockoutUntil ? `Try again in ${secondsLeft}s` : 'Sign In'}
           </button>
-        </div>
-        <div style={{ marginTop: '32px', padding: '16px', background: '#f9fafb', borderRadius: '12px', textAlign: 'center' }}>
-          <p style={{ fontSize: '14px', color: '#6b7280' }}>
-            Demo: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1f2937' }}>admin / admin123</span>
-          </p>
         </div>
       </div>
     </div>
